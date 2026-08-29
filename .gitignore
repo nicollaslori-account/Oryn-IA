@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# Configuração local do usuário
+config.json
+
+# Backup de workflows pessoais (a raiz de comfy_workflows recebe o backup)
+comfy_workflows/*.json
+
+# Sistema/Windows
+Thumbs.db
+Desktop.ini
+.DS_Store
