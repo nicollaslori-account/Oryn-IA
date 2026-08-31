@@ -1590,6 +1590,17 @@
     bindDrop($("#filesDrop"), handleFiles);
 
     // settings
+    $("#setBackendReveal").addEventListener("click", function () {
+      var revealed = this.getAttribute("aria-pressed") === "true";
+      var next = !revealed;
+      this.setAttribute("aria-pressed", String(next));
+      document.querySelectorAll(".ip-input").forEach(function (el) {
+        el.type = next ? "text" : "password";
+        if (next) el.focus();
+      });
+      $("#eyeOpen").classList.toggle("hidden", next);
+      $("#eyeClosed").classList.toggle("hidden", !next);
+    });
     $("#saveSettingsBtn").addEventListener("click", saveAllSettings);
     $("#setLang").addEventListener("change", function () {
       settings.lang = this.value;

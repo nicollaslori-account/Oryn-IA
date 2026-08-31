@@ -762,6 +762,15 @@ body[data-theme="custom"] #themeIconSun { display: none; }
 .lbl { font-size: 12px; font-weight: 700; letter-spacing: 0.05em; color: var(--muted); margin-top: 6px; }
 .lbl.sm { font-size: 11px; }
 
+/* Campos protegidos de endereço (olhinho) */
+.ip-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 2px; }
+.ip-head .lbl { margin: 0; }
+.icon-btn.eye { padding: 6px; }
+.ip-head .icon-btn.eye[aria-pressed="true"] { color: var(--primary); }
+.ip-fields { display: flex; flex-direction: column; gap: 2px; }
+.ip-row { display: flex; align-items: center; gap: 6px; }
+.ip-row input.ip-input { flex: 1; }
+
 textarea, input[type="text"], input[type="number"], input[type="password"], select {
   width: 100%;
   background: var(--bg2);
