@@ -286,8 +286,127 @@ FOOD_EXTRA = [
     "gin", "licor", "caipirinha", "mojito", "piña colada", "margarita",
 ]
 
+# Time de futebol
+FOOTBALL_TEAMS = [
+    "flamengo", "palmeiras", "corinthians", "são paulo", "santos", "grêmio",
+    "internacional", "cruzeiro", "atlético mineiro", "fluminense", "botafogo",
+    "vasco", "bahia", "vitória", "fortaleza", "ceará", "sport recife",
+    "naútico", "goiás", "atlético goianiense", "coritiba", "athletico paranaense",
+    "cuiabá", "juventude", "red bull bragantino", "américa mineiro", "criciúma",
+    "chapecoense", "avaí", "figueirense", "csa", "bragantino", "seleção brasileira",
+    "real madrid", "barcelona", "manchester united", "manchester city", "liverpool",
+    "arsenal", "chelsea", "bayern de munique", "borussia dortmund", "juventus",
+    "milão", "inter de milão", "paris saint-germain", "ajax", "porto", "benfica",
+    "sporting", "boca juniors", "river plate", "nacional do uruguai", "peñarol",
+    "barcelona de guayaquil", "flamengo 2019", "seleção brasileira 2002",
+    "seleção brasileira 1970", "pelé santos", "maracanã", "copa libertadores",
+]
+
+# Estados e capitais do Brasil
+BRAZIL_STATES = [
+    "amazonas", "pará", "rondônia", "acre", "roraima", "tocantins", "amapá",
+    "maranhão", "piauí", "ceará", "rio grande do norte", "paraíba", "pernambuco",
+    "alagoas", "sergipe", "bahia", "minas gerais", "espírito santo", "rio de janeiro",
+    "são paulo", "paraná", "santa catarina", "rio grande do sul", "mato grosso",
+    "mato grosso do sul", "goiás", "distrito federal",
+]
+BRAZIL_CITIES = [
+    "são paulo", "rio de janeiro", "salvador", "brasília", "fortaleza", "belo horizonte",
+    "manaus", "curitiba", "recife", "porto alegre", "belém", "goiânia", "guarulhos",
+    "campinas", "são luís", "maceió", "campo grande", "niterói", "joinville", "florianópolis",
+    "santos", "ribeirão preto", "são josé dos campos", "uberlândia", "sorocaba",
+    "londrina", "cuiabá", "joão pessoa", "natal", "teresina", "aracaju", "vitória",
+    "macapá", "boa vista", "porto velho", "rio branco", "palmas", "campinas",
+    "gramado", "blumenau", "paraty", "ouro preto", "ilhéus", "lençóis maranhenses",
+    "bonito ms", "foz do iguaçu", "balneário camboriú", "campos do jordão",
+]
+
+# Universidades / instituições
+UNIVERSITIES = [
+    "usp", "unicamp", "unifesp", "unesp", "ufrj", "ufmg", "ufrgs", "unesp",
+    "uff", "ufsc", "ufpr", "ufpe", "ufba", "ufpa", "ufc", "unb", "ufg",
+    "ufes", "ufam", "ufmt", "uerj", "ita", "ime", "poli usp", "famerp",
+    "enem", "fies", "prouni", "sisu", "puc", "mackenzie", "anhembi morumbi",
+    "senai", "senac", "sebrae", "capes", "cnpq", "aiesp", "futura",
+    "ifsp", "ufsm", "ufla", "ufv", "ufop", "ufscar", "unesp",
+    "harvard", "oxford", "mit", "stanford", "cambridge", "yale", "princeton",
+]
+
+# Empresas e marcas do Brasil
+COMPANIES = [
+    "vale", "petrobras", "itau", "bradesco", "santander", "banco do brasil",
+    "caixa economica", "nubank", "picpay", "inter", "c6 bank", "magazine luiza",
+    "americanas", "casas bahia", "renner", "c&a", "zara", "havaianas",
+    "natasha", "cacau show", "boticário", "o boticário", "embraer",
+    "marcopolo", "ambev", "brahma", "skol", "antarctica", "italiano",
+    "natura", "avon", "sadia", "perdigão", "seara", "jbs", "minerva",
+    "walmart", "carrefour", "grupo pão de açúcar", "assai", "atacadão",
+    "ifood", "rappi", "99", "uber no brasil", "gol", "latam", "azul",
+    "tv globo", "globo", "sbt", "record", "band", "uol", "g1",
+    "mcdonald's no brasil", "subway", "burger king", "habib's", "spoleto",
+]
+
+# Animais populares
+ANIMALS = [
+    "leão", "tigre", "onça", "leopardo", "guepardo", "elefante", "girafa",
+    "rinoceronte", "hipopótamo", "zebra", "cavalo", "burro", "boi", "vaca",
+    "ovelha", "cabra", "porco", "cabra", "galinha", "galo", "pato", "ganso",
+    "peru", "avestruz", "pinguim", "coruja", "águia", "falcão", "gavião",
+    "papagaio", "tucano", "beija-flor", "canário", "codorna", "pomba", "urubu",
+    "cobra", "crocodilo", "jacaré", "lagarto", "iguana", "tartaruga", "jabuti",
+    "sapo", "rã", "salamandra", "tubarão", "baleia", "golfinho", "orca",
+    "peixe-beta", "tilápia", "salmão", "atum", "polvo", "lula", "caranguejo",
+    "camarão", "lagosta", "cavalo-marinho", "estrela-do-mar", "cachorro",
+    "gato", "coelho", "hamster", "furão", "rato", "camundongo", "esquilo",
+    "macaco", "gorila", "chimpanzé", "orangotango", "panda", "urso pardo",
+    "urso polar", "lobo", "raposa", "coiote", "hiena", "mangusto", "suricato",
+    "canguru", "coala", "ornitorrinco", "tamanduá", "tatu", "capivara",
+    "bicho-preguiça", "arara-azul", "mico-leão-dourado", "tucano-toco",
+]
+
+# Feriados, datas e história do Brasil
+HOLIDAYS_DATE = [
+    "dia das mães", "dia dos pais", "dia das crianças", "dia dos namorados",
+    "dia do trabalho", "dia da independência", "dia de finados", "carnaval",
+    "páscoa", "sexta-feira santa", "corpus christi", "dia da consciência negra",
+    "reveillon", "ano novo", "festa junina", "são joão", "são pedro", "são marcos",
+    "dia das bruxas", "halloween", "natal", "dia de são joão", "carnaval no brasil",
+    "revolução de 1930", "proclamação da república", "revolução farroupilha",
+    "guerra do paraguai", "inconfidência mineira", "revolta da vacina",
+    "revolta da chibata", "canudos", "cangaço", "lampião", "bandeirantes",
+    "capitania hereditária", "colonização do brasil", "era vargas", "ditadura militar",
+    "abertura democrática", "diretas já", "plano real", "constituição de 1988",
+    "redemocratização", "eleições diretas", "pré-sal", "guerra dos farrapos",
+    "missões jesuíticas", "quilombos", "escravidão no brasil", "abolição da escravatura",
+]
+
+# Doenças e sintomas comuns
+DISEASES = [
+    "gripe", "resfriado", "covid", "dengue", "zika", "chikungunya", "febre amarela",
+    "malária", "tuberculose", "pneumonia", "bronquite", "asma", "rinite", "sinusite",
+    "amigdalite", "otite", "conjuntivite", "gastrite", "úlcera", "refluxo",
+    "intoxicação alimentar", "diarréia", "constipação", "hérnia", "apendicite",
+    "cálculo renal", "infecção urinária", "cistite", "hepatite", "cirrose", "gordura no fígado",
+    "pancreatite", "diabetes tipo 1", "diabetes tipo 2", "hipertensão", "colesterol alto",
+    "infarto", "avc", "arritmia", "insuficiência cardíaca", "aneurisma", "trombose",
+    "anemia", "leucemia", "linfoma", "câncer de mama", "câncer de próstata",
+    "câncer de pele", "câncer de pulmão", "câncer de colon", "tumor cerebral",
+    "artrite", "artrose", "osteoporose", "gota", "fibromialgia", "lupus",
+    "esclerose múltipla", "parkinson", "alzheimer", "epilepsia", "enxaqueca",
+    "mal de parkinson", "depressão", "ansiedade", "burnout", "tdah", "autismo",
+    "bipolaridade", "esquizofrenia", "insônia", "apneia do sono", "ronco",
+    "vergonha", "fobia", "síndrome do pânico", "toca em conta", "dermatite",
+    "psoríase", "acne", "eczema", "micose", "herpes", "sífilis", "gonorreia",
+    "hiv", "aids", "verruga", "furúnculo", "unha encravada", "cárie", "gengivite",
+]
+
 # Build final TOPICS
-_topics_extra = GEO_EXTRA + FOOD_WORLD + PERSONALITIES + MOVIES_SERIES + MUSICIANS + MEMES_INTERNET + FOOD_EXTRA
+_topics_extra = (
+    GEO_EXTRA + FOOD_WORLD + PERSONALITIES + MOVIES_SERIES + MUSICIANS
+    + MEMES_INTERNET + FOOD_EXTRA + FOOTBALL_TEAMS + BRAZIL_STATES
+    + BRAZIL_CITIES + UNIVERSITIES + COMPANIES + ANIMALS + HOLIDAYS_DATE
+    + DISEASES
+)
 for _country, _capital in COUNTRIES_CAPITALS:
     _topics_extra.append(_country)
     _topics_extra.append(f"capital de {_country}")
