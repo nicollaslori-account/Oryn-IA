@@ -494,13 +494,258 @@ BRAZILIAN_PEOPLE = [
     "gabriel pensador", "marcelo d2", "mv bill", "sabotage", "racionais",
 ]
 
+# Países adicionais (África, Ásia, ilhas e pequenas nações)
+COUNTRIES_MORE = [
+    "burundi", "chade", "comores", "congo", "república democrática do congo",
+    "djibouti", "eritréia", "essuatíni", "gabão", "gâmbia", "guiné", "guiné-bissau",
+    "guiné equatorial", "lesoto", "liberia", "madagascar", "malauí", "mali",
+    "mauritânia", "maurício", "niger", "ruanda", "são tomé e príncipe",
+    "seicheles", "serra leoa", "somália", "sudão do sul", "togo", "zimbábue",
+    "brunei", "butão", "cambodja", "chipre", "filipinas", "geórgia", "ilhas marshall",
+    "ilhas salomão", "jordânia", "kiribati", "laos", "maldivas", "micronésia",
+    "mongólia", "nauru", "palau", "papua-nova-guiné", "samoa", "timor-leste",
+    "tonga", "tuvalu", "vanuatu", "armênia", "azerbaijão", "cazaquistão",
+    "quirguistão", "tadjiquistão", "turcomenistão", "bósnia e herzegovina",
+    "macedônia", "montenegro", "eslovênia", "kosovo", "mônaco", "luxemburgo",
+    "liechtenstein", "andorra", "são marino", "malta", "cyprus norte",
+    "guernsey", "jersey", "ilha de man", "groelândia", "fernando de noronha",
+    "trindade e martim vaz", "ilha de santa helena", "foz do iguaçu",
+]
+
+# Ciência avançada e natureza
+SCIENCE_NATURE = [
+    "física quântica", "mecânica quântica", "relatividade", "teoria das cordas",
+    "partícula elementar", "bóson de higgs", "matéria escura", "energia escura",
+    "big bang", "multiverso", "buracos de minhoca", "espaço-tempo", "singularidade",
+    "supernova", "estrela de nêutrons", "pulsar", "quasar", "nebulosa", "constelação",
+    "via láctea", "sistema solar", "planetas anões", "plutão", "cometa", "asteroide",
+    "cinturão de asteroides", "meteoro", "meteorito", "eclipse", "eclipse solar",
+    "eclipse lunar", "marte colonização", "lua fase", "fases da lua", "marés",
+    "planeta terra", "atmosfera", "camadas da terra", "tectônica de placas",
+    "deriva continental", "pangeia", "erosão", "sedimentação", "rochas", "minerais",
+    "pedras preciosas", "diamante", "esmeralda", "rubi", "safira", "cristal",
+    "fósseis", "dinossauros", "tiranossauro", "triceratops", "velociraptor",
+    "pterodáctilo", "mastodonte", "mamute", "eras geológicas", "cambriano",
+    "jurássico", "cretáceo", "pré-história", "evolução humana", "hominídeos",
+    "neandertal", "primeiros humanos", "homo sapiens", "bípedes",
+    "célula eucariota", "célula procariota", "mitocôndria", "núcleo celular",
+    "cloroplasto", "atp", "proteínas", "enzimas", "hormônios", "hormônios do crescimento",
+    "sistema nervoso", "neurônios", "sinapse", "cérebro humano", "hemisfério cerebral",
+    "sistema circulatório", "coração humano", "artérias", "veias", "sangue",
+    "glóbulos vermelhos", "glóbulos brancos", "plaquetas", "sistema imunológico",
+    "anticorpos", "vacinas", "sistema digestivo", "estômago", "intestino",
+    "fígado", "rins", "sistema respiratório", "pulmões", "sistema muscular",
+    "sistema esquelético", "pele humana", "olho humano", "visão humana",
+    "reprodução humana", "gravidez", "nascimento", "envelhecimento",
+]
+
+# Termos médicos e exames
+MEDICAL_TERMS = [
+    "exame de sangue", "hemograma", "glicemia", "hemoglobina", "colesterol",
+    "triglicerídeos", "exame de urina", "exame de fezes", "ultrassom", "raio-x",
+    "tomografia", "ressonância magnética", "eletrocardiograma", "ecocardiograma",
+    "endoscopia", "colonoscopia", "biópsia", "papanicolau", "mamografia",
+    "psa", "teste de gravidez", "teste de covid", "teste rápido", "vacinação",
+    "cartão de vacina", "calendário de vacinas", "vacina da gripe", "vacina do covid",
+    "antitérmico", "analgésico", "anti-inflamatório", "antibiótico", "antialérgico",
+    "antidepressivo", "ansiolítico", "vitamina d", "suplemento", "probiótico",
+    "prebiótico", "calmante", "reposição hormonal", "pressão arterial",
+    "batimento cardíaco", "saturação", "oxigênio no sangue", "imc", "índice de massa corporal",
+    "peso ideal",     "calorias", "gasto calórico", "metabolismo", "metabolismo basal", "fadiga",
+    "tontura", "enjoo", "náusea", "vômito", "cólica", "dor de estômago",
+    "dor nas costas", "dor no joelho", "dor de coluna", "dor muscular",
+    "dor de garganta", "tosse", "espirro", "congestão nasal", "falta de ar",
+    "palpitação", "suor noturno", "perda de apetite", "ganho de peso",
+    "perda de peso", "cansaço", "sonolência", "clareza de pele", "pele ressecada",
+    "queda de cabelo", "caspa", "unhas fracas", "olheiras", "espinhas",
+]
+
+# Cultura pop asiática (K-drama, anime, j-drama)
+ASIA_POP = [
+    "k-drama", "dorama", "k-pop", "bts", "blackpink", "twice", "exo", "super junior",
+    "girls' generation", "nct", "stray kids", "ateez", "itzy", "aespa", "newjeans",
+    "seventeen", "enhypen", "txt", "rnb coreano", "boa", "hwang in-yeop",
+    "squid game detalhes", "parasita filme", "ilha da alegria", "o jogo da morte",
+    "dark k-drama", "romance k-drama", "crime k-drama", "terror k-drama",
+    "anime", "mangá", "one piece", "naruto", "dragon ball", "attack on titan",
+    "demon slayer", "jujutsu kaisen", "my hero academia", "fullmetal alchemist",
+    "death note", "cowboy bebop", "evangelion", "jogo dos anéis", "solo leveling",
+    "chainsaw man", "kaiju nº 8", "spy x family", "frieren", "violet evergarden",
+    "your name", "perfeito azul", "oulast do mundo", "made in abyss",
+    "castle in the sky", "spirited away", "howl's moving castle", "totoro",
+    "studio ghibli", "hayao miyazaki", "silent voice", "weathering with you",
+    "suzume", "look back", "kaiju nº 8", "freiren", "jujutsu infinito",
+    "japão cultura", "coreia cultura", "china cultura", "viska", "hanbok",
+    "kimono", "sushi cultura", "onigiri", "mochi", "origami", "ikebana",
+    "samurai", "ninja", "geisha", "manga história",
+]
+
+# Games completos
+GAMES_ALL = [
+    "zelda ocarina of time", "zelda breath of the wild", "super mario games",
+    "sonic", "crash bandicoot", "spyro", "tomb raider", "resident evil",
+    "silent hill", "final fantasy", "kingdom hearts", "nintendo", "sega",
+    "atari", "playstation games", "xbox games", "pc games", "indie games",
+    "stardew valley", "hollow knight", "celeste", "hades", "terraria",
+    "the sims", "simcity", "cities skylines", "civilization", "age of empires",
+    "total war", "hearts of iron", "eu4", "paradox games",
+    "grand theft auto", "red dead redemption", "cyberpunk 2077", "witcher 3",
+    "elden ring", "dark souls", "bloodborne", "sekiro", "god of war",
+    "horizon zero dawn", "the last of us", "uncharted", "spider-man games",
+    "batman arkham", "assassin's creed", "far cry", "watch dogs",
+    "the elder scrolls", "skyrim", "fallout", "dragon age", "mass effect",
+    "bioshock", "dishonored", "prey", "dead space", "doom", "quake",
+    "halo", "gears of war", "destiny", "overwatch", "apex legends",
+    "valorant rrs", "league of legends game", "dota 2", "cs go", "rainbow six siege",
+    "fortnite game", "pubg", "call of duty", "battlefield", "titanfall",
+    "minecraft game", "roblox game", "garry's mod", "half-life", "portal",
+    "team fortress", "counter strike", "racing games", "fifa", "pes", "nba 2k",
+    "madden", "need for speed", "forza", "gran turismo", "mario kart",
+    "street fighter", "mortal kombat", "tekken", "injustice", "smash bros",
+    "animal crossing", "pokemon games", "digimon", "yugioh", "magic the gathering",
+    "card games", "board games", "rpg de mesa", "dungeons and dragons",
+    "warhammer", "miniaturas", "escape room", "jogo de tabuleiro",
+]
+
+# Mais estilos musicais
+MUSIC_STYLES = [
+    "sertanejo", "pagode", "funk carioca", "trap", "hip hop", "rap", "drill",
+    "reggaeton", "reggae", "ska", "dubstep", "techno", "house", "trance",
+    "drum and bass", "hardstyle", "edm", "lofi", "jazz", "blues", "gospel",
+    "mpb", "bossa nova", "samba", "pagode baiano", "axé", "forró", "xote",
+    "baião", "frevo", "maracatu", "axé music", "arrocha", "brega",
+    "brega funk", "piseiro", "garota", "vaquejada", "seresta", "bolero",
+    "salsa", "merengue", "tango", "cumbia", "bachata", "mambo", "chacha",
+    "sertanejo raiz", "sertanejo universitário", "modão", "raca", "gospel contemporâneo",
+    "música clássica", "ópera", "sinfonia", "concerto", "sonata", "chorinho",
+    "seresta", "xaxado", "samba-enredo", "samba de roda", "pagode de mesa",
+]
+
+# Instrumentos e música
+INSTRUMENTS = [
+    "violão", "guitarra", "baixo", "bateria", "piano", "teclado", "acordeão",
+    "sanfona", "violino", "cello", "contrabaixo", "harpa", "flauta", "saxofone",
+    "clarinete", "trompete", "trombone", "oboe", "fagote", "tuba", "corneta",
+    "gaita", "harmônica", "viola", "cavaquinho", "banjo", "mandolim", "ukulele",
+    "tambor", "conga", "bongô", "timbal", "pandeiro", "berimbau", "agogô",
+    "triângulo", "chocalho", "reco-reco", "maracas", "sinos", "xilofone",
+    "sitara", "tabla", "didgeridoo", "organ", "sintetizador",
+]
+
+# Fenômenos naturais e clima
+PHENOMENA = [
+    "raio", "trovão", "tempestade", "tornado", "furacão categoria", "ciclone",
+    "tsunami", "maremoto", "terremoto", "tremor", "enchente", "inundação",
+    "deslizamento", "seca", "deserto no brasil", "geada", "neve", "granizo",
+    "chuva ácida", "poluição do ar", "poluição da água", "poluição sonora",
+    "efeito estufa", "buraco na camada de ozônio", "mudanças climáticas",
+    "aquecimento global", "fenômeno la niña", "fenômeno el niño",
+    "frente fria", "frente quente", "pressão atmosférica", "unidade de medidas",
+    "graus celsius", "fahrenheit", "kelvin", "umidade relativa", "índice de calor",
+    "índice uv", "radiação solar", "vulcão em erupção", "lava", "magma",
+    "nuvens", "tipos de nuvem", "nuvem de chuva", "nuvem cumulonimbus",
+    "arco-íris", "miragem", "nebulosidade", "nevoeiro", "neblina", "vento",
+    "brisa", "monção", "passado glacial", "era do gelo", "permafrost",
+]
+
+# Instituições internacionais e termos do mundo
+WORLD_TERMS = [
+    "onu", "unesco", "unicef", "oms", "fmi", "banco mundial", "nato", "g20",
+    "g7", "opec", "uele", "mercosul", "usp dh", "tratados internacionais",
+    "direitos humanos", "declaração universal dos direitos humanos", "onu mulher",
+    "comissão de direitos humanos", "anistia internacional", "greenpeace",
+    "organização mundial do comércio", "omc", "onu meio ambiente", "unfpa",
+    "objetivos de desenvolvimento sustentável", "ods", "agenda 2030",
+    "protocolo de kyoto", "acordo de paris", "cúpula do clima", "cop30",
+    "geopolítica", "guerra comercial", "sancões econômicas", "embargo",
+    "diplomacia", "embaixada", "consulado", "visto americano", "visto europeu",
+    "green card", "imigração", "cidadania", "passaporte brasileiro", "remessa",
+    "adotar gato", "leis no brasil", "constituição brasileira", "código civil brasileiro",
+    "código penal brasileiro", "código do consumidor", "estatuto da criança e do adolescente",
+    "eca", "estatuto do idoso", "lei trabalhista brasileira", "clt",
+    "direito do trabalho", "direito penal", "direito civil", "direito tributário",
+]
+
+# Ferramentas de escritório e produtividade
+OFFICE_TOOLS = [
+    "word", "excel", "powerpoint", "outlook", "google docs", "google sheets",
+    "google slides", "notion", "trello", "asana", "monday", "clickup",
+    "slack", "teams", "zoom", "google meet", "skype", "whatsapp business",
+    "canva", "figma", "photoshop", "illustrator", "premiere", "after effects",
+    "audacity", "obs studio", "streamlabs", "obs", "discord server",
+    "google trends", "google analytics", "seo", "sem", "google ads", "meta ads",
+    "tiktok ads", "instagram ads", "email marketing", "mailchimp", "rd station",
+    "hubspot", "salesforce", "zendesk", "intercom", "kera", "n8n", "zapier",
+    "make", "botpress", "dialogflow", "power automate", "vba", "macro",
+    "planilha de controle", "controle financeiro", "fluxo de caixa",
+    "orcamento pessoal", "planilha de gastos", "dashboards", "kpi",
+    "crm", "erp", "sap", "totvs", "blip", "bi", "etl",
+]
+
+# Culinária regional brasileira
+REGIONAL_FOOD = [
+    "churrasco gaúcho", "feijoada completa", "moqueca baiana", "vatapá",
+    "acaraje", "tacaca", "tambaquí", "peixe frito", "caranguejo ucraniano",
+    "pato no tucupi", "maniçoba", "baião de dois", "cuscuz nordestino",
+    "bode guisado", "buchada", "tropeiro", "pão de queijo mineiro",
+    "feijão tropeiro", "frango com quiabo", "leitao à pururuca", "virado à paulista",
+    "bobó de camarão", "caldeirada", "moqueca capixaba", "feijão verde",
+    "canjiquinha", "angu", "polenta", "toscana", "galinha caipira",
+    "pernil com farofa", "lombo com farofa", "arroz carreteiro", "paçoca de carne",
+    "farinha de mandioca", "tapioca recheada", "beiju", "cuscuz de milho",
+    "mingau", "bolo de fubá", "broa de milho", "pamonha doce", "canjica",
+    "curau", "pudim de leite", "manjar", "brigadeiro gourmet", "beijinho",
+    "cajuzinho", "olho de sogra", "quindim", "marmelada", "goiabada",
+    "rapadura", "melado", "queijo minas", "requeijão", "manteiga de garrafa",
+]
+
+# Física e ciências do cotidiano
+EVERYDAY_SCIENCE = [
+    "gravidade", "magnetismo", "eletricidade", "corrente elétrica", "voltagem",
+    "amperagem", "resistência elétrica", "circuito elétrico", "campo magnético",
+    "ímã", "eletromagnetismo", "termodinâmica", "calor", "temperatura",
+    "pressão", "vapor", "condensação", "evaporação", "ebulição", "fusão",
+    "solidificação", "sublimação", "densidade", "massa", "peso", "volume",
+    "velocidade", "aceleração", "força", "energia", "energia cinética",
+    "energia potencial", "energia química", "trabalho", "potência",
+    "leis de newton", "lei da gravitação", "terceira lei", "movimento",
+    "ondas", "som", "luz", "refração", "reflexão", "prisma", "lente",
+    "microscópio", "telescópio", "espelho", "raio laser", "raios x",
+    "fungos", "algas", "protozoários", "bactérias benéficas", "liberação de energia",
+    "reação química", "molécula", "átomo", "elemento químico", "tabela periódica",
+    "metais", "não metais", "gases nobres", "sais", "ácidos", "bases",
+    "ph", "solução", "mistura", "suspensão", "colóide", "precipitação",
+]
+
+# Artistas visuais e designers
+VISUAL_ARTISTS = [
+    "pablo picasso", "van gogh", "monet", "renoir", "degas", "cézanne",
+    "auguste rodin", "michelangelo", "da vinci", "rafael sanzio",
+    "botticelli", "candido portinari", "tarsila do amaral", "diego rivera",
+    "frida kahlo", "salvador dali", "andy warhol", "banksy", "jean-michel basquiat",
+    "keith haring", "roy lichtenstein", "edvard munch", "gustav klimt",
+    "johannes vermeer", "rembrandt", "caravaggio", "goya", "henri matisse",
+    "paul gauguin", "paul klee", "wassily kandinsky", "piet mondrian",
+    "umbra banco", "lívia melzi", "binho", "os gemeos", "nina pandolfo",
+    "cobrança de arte", "grafite", "muralismo", "instalação artística",
+    "performance art", "fotografia de rua", "street art", "arte abstrata",
+    "arte moderna", "arte contemporânea", "impressionismo", "cubismo",
+    "surrealismo", "expressionismo", "pop art", "fauvismo", "dadaísmo",
+    "barroco", "renascimento", "neoclassicismo", "romantismo", "art deco",
+    "fotografia", "desenho artístico", "aquarela", "guache", "óleo sobre tela",
+    "escultura", "cerâmica artística", "design gráfico", "diagramação",
+]
+
 # Build final TOPICS
 _topics_extra = (
     GEO_EXTRA + FOOD_WORLD + PERSONALITIES + MOVIES_SERIES + MUSICIANS
     + MEMES_INTERNET + FOOD_EXTRA + FOOTBALL_TEAMS + BRAZIL_STATES
     + BRAZIL_CITIES + UNIVERSITIES + COMPANIES + ANIMALS + HOLIDAYS_DATE
     + DISEASES + RELIGION + SPORTS_EXTRA + CAREER_WRITING + TECH_NEW_2026
-    + TRAVEL_MORE + BRAZILIAN_PEOPLE
+    + TRAVEL_MORE + BRAZILIAN_PEOPLE + COUNTRIES_MORE + SCIENCE_NATURE
+    + MEDICAL_TERMS + ASIA_POP + GAMES_ALL + MUSIC_STYLES + INSTRUMENTS
+    + PHENOMENA + WORLD_TERMS + OFFICE_TOOLS + REGIONAL_FOOD
+    + EVERYDAY_SCIENCE + VISUAL_ARTISTS
 )
 for _country, _capital in COUNTRIES_CAPITALS:
     _topics_extra.append(_country)
