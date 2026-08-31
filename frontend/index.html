@@ -40,6 +40,10 @@
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="m10 9 5 3-5 3Z"/></svg>
           <span data-i18n="nav.videos"></span>
         </button>
+        <button class="nav-item" data-view="agent" type="button">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z"/></svg>
+          <span data-i18n="nav.agent"></span>
+        </button>
         <button class="nav-item" data-view="settings" type="button">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>
           <span data-i18n="nav.settings"></span>
@@ -308,6 +312,13 @@
                 </select>
               </div>
             </div>
+            <div class="frow sound-row">
+              <label class="lbl sm" data-i18n="videos.sound"></label>
+              <label class="switch">
+                <input type="checkbox" id="vidSoundToggle" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
             <div class="gen-actions">
               <div class="gen-status" id="vidStatus"></div>
               <button class="btn btn-primary" id="vidGenerateBtn" type="button">
@@ -325,6 +336,38 @@
               </div>
             </div>
             <div class="result-hint" data-i18n="videos.hint"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ AGENTE ============ -->
+      <section class="view" id="view-agent">
+        <div class="gen-head">
+          <span class="chip chip-gold" data-i18n="agent.chip"></span>
+          <h2><span data-i18n="agent.title1"></span> <span class="grad" data-i18n="agent.title2"></span></h2>
+          <p data-i18n="agent.sub"></p>
+        </div>
+        <div class="gen-layout">
+          <div class="card form-card">
+            <label class="lbl" data-i18n="agent.task"></label>
+            <textarea id="agentTask" rows="3" data-i18n-placeholder="agent.placeholder"></textarea>
+            <div class="gen-actions">
+              <div class="gen-status" id="agentStatus"></div>
+              <button class="btn btn-primary" id="agentRunBtn" type="button">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z"/></svg>
+                <span data-i18n="agent.run"></span>
+              </button>
+            </div>
+            <div class="result-hint" id="agentWorkspace"></div>
+          </div>
+          <div class="result-card">
+            <div class="gen-result-list" id="agentLog">
+              <div class="empty-state">
+                <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z"/></svg>
+                <div class="empty-title" data-i18n="agent.emptyTitle"></div>
+                <div class="empty-sub" data-i18n="agent.emptySub"></div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

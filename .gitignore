@@ -6,6 +6,21 @@ __pycache__/
 # Configuração local do usuário
 config.json
 
+# Memória de pesquisa local
+search_memory.db
+
+# Áudio temporário dos vídeos
+audio_tmp/
+
+# Modelos de áudio locais (Piper voice)
+models/audio/
+
+# Workspace do agente (arquivos criados pela IA)
+workspace/
+
+# Log de execução do seeding
+seed_run.log
+
 # Backup de workflows pessoais (a raiz de comfy_workflows recebe o backup)
 comfy_workflows/*.json
 

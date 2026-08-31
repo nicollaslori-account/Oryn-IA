@@ -5,11 +5,14 @@ import os
 import re
 import shutil
 import time
+import html
 import urllib.parse
 from pathlib import Path
 from typing import Any
 
 import requests
+import audio_gen
+import agent
 from flask import Flask, Response, jsonify, request, send_from_directory
 
 ROOT = Path(__file__).parent
@@ -25,6 +28,8 @@ COMFYUI_CANDIDATE_ROOTS = [
 ]
 
 MAX_UPLOAD_BYTES = 100 * 1024 * 1024
+
+SEARCH_DB = ROOT / "search_memory.db"
 
 app = Flask(__name__, static_folder=str(FRONTEND), static_url_path="/static")
 
@@ -183,11 +188,17 @@ def status():
     except OSError:
         disk_free_gb = disk_total_gb = None
 
+    try:
+        audio_ready = audio_gen.status()
+    except Exception:
+        audio_ready = {"voice": False, "scene": False, "sceneEngine": "musicgen", "busy": False}
+
     return jsonify({
         "backend": True,
         "ollama": ollama_online,
         "models": models,
         "vision": any(n.lower().split(":", 1)[0] in {"llava", "gemma3", "qwen2.5-vl"} for n in models),
+        "audio": audio_ready,
         "comfyui": comfyui_online,
         "flux_klein": flux_klein_ready,
         "wan_5b": wan_5b_ready,
@@ -252,6 +263,139 @@ def media():
         return jsonify({"error": f"Erro ao buscar arquivo: {e}"}), 502
 
 
+def _search_db():
+    import sqlite3
+    con = sqlite3.connect(str(SEARCH_DB))
+    con.execute("CREATE TABLE IF NOT EXISTS search_items(href TEXT PRIMARY KEY, query TEXT NOT NULL, title TEXT, body TEXT, added_at REAL NOT NULL)")
+    return con
+
+
+def _store_search_results(query: str, results: list[dict[str, str]]) -> None:
+    if not results:
+        return
+    try:
+        con = _search_db()
+        try:
+            now = time.time()
+            for r in results:
+                href = (r.get("href") or "").strip()
+                if not href:
+                    continue
+                con.execute(
+                    "INSERT OR REPLACE INTO search_items(href, query, title, body, added_at) VALUES(?,?,?,?,?)",
+                    (href, query, (r.get("title") or "").strip(), (r.get("body") or "").strip(), now),
+                )
+            con.commit()
+        finally:
+            con.close()
+    except Exception:
+        pass
+
+
+def _cached_results_for(query: str, max_results: int = 5) -> list[dict[str, str]]:
+    words = [w for w in re.split(r"\W+", query.lower()) if len(w) > 3]
+    if not words:
+        return []
+    try:
+        con = _search_db()
+        try:
+            rows = con.execute("SELECT href, title, body FROM search_items").fetchall()
+        finally:
+            con.close()
+    except Exception:
+        return []
+    q = query.lower()
+    scored = []
+    for href, title, body in rows:
+        text = f"{title} {body}".lower()
+        if q in text:
+            scored.append((2 + len(words), {"title": title, "href": href, "body": body}))
+            continue
+        score = sum(1 for w in words if w in text)
+        if score >= 2:
+            scored.append((score, {"title": title, "href": href, "body": body}))
+    scored.sort(key=lambda t: -t[0])
+    return [x[1] for x in scored[:max_results]]
+
+
+def _search_web(query: str, max_results: int = 5) -> list[dict[str, str]]:
+    try:
+        try:
+            from ddgs import DDGS
+        except ImportError:
+            from duckduckgo_search import DDGS
+        try:
+            results = list(DDGS().text(query, max_results=max_results, timeout=8))
+        except TypeError:
+            results = list(DDGS().text(query, max_results=max_results))
+        out = []
+        for r in results or []:
+            if not isinstance(r, dict):
+                continue
+            href = str(r.get("href", "") or r.get("url", ""))
+            if not href:
+                continue
+            out.append({
+                "title": str(r.get("title", "")),
+                "href": href,
+                "body": str(r.get("body", "") or r.get("snippet", "")),
+            })
+        if out:
+            return out
+    except Exception:
+        pass
+    return _bing_search(query, max_results)
+
+
+def _bing_search(query: str, max_results: int = 5) -> list[dict[str, str]]:
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0 Safari/537.36"
+    }
+    try:
+        url = "https://www.bing.com/search?q=" + urllib.parse.quote(query) + "&count=" + str(max_results)
+        r = requests.get(url, headers=headers, timeout=10)
+        r.raise_for_status()
+    except requests.RequestException:
+        return []
+    out = []
+    for block in re.findall(r'<li class="b_algo".*?</li>', r.text, re.S):
+        m_url = re.search(r'<h2[^>]*><a[^>]*href="([^"]+)"', block)
+        m_title = re.search(r"<h2[^>]*><a[^>]*>(.*?)</a>", block, re.S)
+        m_snip = re.search(r"<p[^>]*>(.*?)</p>", block, re.S)
+        if not m_url:
+            continue
+        href = html.unescape(m_url.group(1))
+        title = re.sub(r"<[^>]+>", "", html.unescape(m_title.group(1))) if m_title else ""
+        body = re.sub(r"<[^>]+>", "", html.unescape(m_snip.group(1))) if m_snip else ""
+        out.append({"title": title.strip(), "href": href, "body": body.strip()})
+        if len(out) >= max_results:
+            break
+    return out
+
+
+def _web_results_block(query: str) -> str:
+    try:
+        results = _search_web(query)
+        _store_search_results(query, results)
+    except Exception:
+        results = []
+    if not results:
+        results = _cached_results_for(query)
+    if not results:
+        return ""
+    lines = []
+    for i, r in enumerate(results[:5], 1):
+        title = (r.get("title") or "").strip()
+        body = (r.get("body") or "").strip()
+        href = (r.get("href") or "").strip()
+        if not href and not body:
+            continue
+        if len(body) > 250:
+            body = body[:250] + "\u2026"
+        lines.append(f"{i}. {title} \u2014 {body} ({href})")
+    return "[Resultados da web]\n" + "\n".join(lines) if lines else ""
+
+
 @app.post("/api/chat")
 def chat():
     data = request.get_json(silent=True) or {}
@@ -261,6 +405,22 @@ def chat():
             msg = dict(msg)
             msg["images"] = [im.split(",", 1)[1] if isinstance(im, str) and im.startswith("data:") else im for im in msg["images"]]
         messages.append(msg)
+
+    last_user = None
+    for idx in range(len(messages) - 1, -1, -1):
+        m = messages[idx]
+        if isinstance(m, dict) and m.get("role") == "user" and isinstance(m.get("content"), str) and m.get("content").strip():
+            last_user = idx
+            break
+    if last_user is not None:
+        content = messages[last_user]["content"]
+        if not content.lstrip().startswith("/") and "[Resultados da web]" not in content:
+            ctx = _web_results_block(content[:300])
+            if ctx:
+                m = dict(messages[last_user])
+                m["content"] = ctx + "\n\n---\n\n" + content
+                messages[last_user] = m
+
     payload = {
         "model": data.get("model", "oryn:14b"),
         "messages": messages,
@@ -338,14 +498,13 @@ def search():
     if not query:
         return jsonify({"error": "Informe uma pesquisa."}), 400
     try:
-        from duckduckgo_search import DDGS
-        try:
-            results = list(DDGS().text(query, max_results=5))
-        except TypeError:
-            results = list(DDGS().text(query, max_results=5, timeout=10))
+        results = _search_web(query)
+        _store_search_results(query, results)
+        if not results:
+            results = _cached_results_for(query)
         return jsonify({"query": query, "results": results})
-    except requests.Timeout as e:
-        return jsonify({"error": f"Pesquisa expirou: {e}"}), 503
+    except requests.Timeout:
+        return jsonify({"error": "Pesquisa expirou. Tente novamente."}), 503
     except Exception as e:
         msg = str(e)
         if "ratelimit" in msg.lower() or "rate" in msg.lower():
@@ -459,6 +618,102 @@ def animate_image():
         return jsonify({"error": str(e)}), 503
 
     return _submit_comfyui_prompt(wf)
+
+
+@app.get("/api/audio/status")
+def audio_status():
+    try:
+        return jsonify(audio_gen.status())
+    except Exception as e:
+        return jsonify({"error": f"Status de áudio indisponível: {e}"}), 500
+
+
+def _comfy_media_path(f: dict[str, Any]) -> Path | None:
+    ftype = f.get("type") or "output"
+    base_dir = {"output": "output", "input": "input", "temp": "temp"}.get(ftype, "output")
+    sub = f.get("subfolder") or ""
+    filename = f.get("filename") or ""
+    if not filename or "/" in filename or "\\" in filename or ".." in filename:
+        return None
+    for root in detect_comfyui_roots():
+        p = root / base_dir / sub / filename
+        if p.exists():
+            return p
+    return None
+
+
+@app.post("/api/audio/render")
+def audio_render():
+    data = request.get_json(silent=True) or {}
+    prompt = data.get("prompt", "").strip()
+    if not prompt:
+        return jsonify({"error": "Informe o prompt para gerar o som."}), 400
+    f = data.get("file")
+    if not isinstance(f, dict) or not f.get("filename"):
+        return jsonify({"error": "Vídeo de origem não informado."}), 400
+    if audio_gen._lock.locked():
+        return jsonify({"error": "Já tem um som sendo gerado. Aguarde e tente de novo."}), 409
+
+    video_path = _comfy_media_path(f)
+    if video_path is None:
+        return jsonify({"error": "Vídeo de origem não encontrado no ComfyUI."}), 404
+
+    duration = float(data.get("durationSeconds") or 5)
+    try:
+        duration = max(1, float(duration))
+    except (TypeError, ValueError):
+        duration = 5
+
+    tmp = ROOT / "audio_tmp"
+    tmp.mkdir(parents=True, exist_ok=True)
+    wav = tmp / f"oryn_{os.urandom(4).hex()}.wav"
+    out_name = f"{Path(f['filename']).stem}_audio.mp4"
+    sub = f.get("subfolder") or "ORYN/video"
+    out_path = video_path.parent / out_name
+
+    with audio_gen._lock:
+        try:
+            engine = audio_gen.render_audio(prompt, duration, wav)
+            audio_gen.mux_audio(video_path, wav, out_path)
+        except Exception as e:
+            return jsonify({"error": f"Falha ao gerar som: {e}"}), 500
+        finally:
+            try:
+                wav.unlink(missing_ok=True)
+            except OSError:
+                pass
+
+    return jsonify({
+        "engine": engine,
+        "file": {"filename": out_name, "subfolder": sub, "type": f.get("type") or "output"},
+    })
+
+
+@app.get("/api/agent/status")
+def agent_status():
+    try:
+        return jsonify(agent.agent_status())
+    except Exception as e:
+        return jsonify({"error": f"Agente indisponível: {e}"}), 500
+
+
+@app.post("/api/agent/run")
+def agent_run():
+    data = request.get_json(silent=True) or {}
+    task = data.get("task", "").strip()
+    if not task:
+        return jsonify({"error": "Descreva a tarefa para o agente."}), 400
+    if len(task) > 3000:
+        return jsonify({"error": "Tarefa longa demais (máx. 3000 caracteres)."}), 400
+    model = data.get("model") or "oryn:14b"
+    try:
+        result = agent.run_agent(task, model, OLLAMA_URL)
+    except requests.RequestException:
+        return jsonify({"error": "Ollama offline. Inicie o Ollama para usar o agente."}), 503
+    except Exception as e:
+        return jsonify({"error": f"Falha no agente: {e}"}), 500
+    status_code = 200 if result.get("ok") else 200
+    return jsonify(result), status_code
 
 
 def _submit_comfyui_prompt(prompt_graph: dict[str, Any]) -> Any:
@@ -757,4 +1012,4 @@ def build_flux2_klein_prompt(
 
 
 if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=int(os.getenv("PORT", "8000")), debug=True)
+    app.run(host="127.0.0.1", port=int(os.getenv("PORT", "8000")), debug=True, use_reloader=False)

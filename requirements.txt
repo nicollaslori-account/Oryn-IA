@@ -37,7 +37,16 @@ python-dotenv>=1.0.0
 numpy>=1.26.0
 
 # Pesquisa
+ddgs>=9.0.0
 duckduckgo-search>=6.1.8
+
+# Som em vídeos (offline) - instale o torch CUDA com:
+#   pip install torch --index-url https://download.pytorch.org/whl/cu128
+torch>=2.7
+transformers>=4.40.0
+diffusers>=0.30.0
+piper-tts>=1.2.0
+huggingface-hub>=0.23.0
 
 # Markdown (preview de arquivos e chat)
 markdown>=3.5

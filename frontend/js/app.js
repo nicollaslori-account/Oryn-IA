@@ -126,7 +126,8 @@
     comfyRoot: "C:\\ComfyUI\\ComfyUI",
     remoteUrl: "",
     imageDefault: "kontext_flux_2_klein", // server override
-    videoDefault: "wan_5b"
+    videoDefault: "wan_5b",
+    videoSound: true
   };
 
   var settings = loadSettings();
@@ -800,7 +801,7 @@
       clearEmpty("#vidGrid");
       var tile = loadingTile(data.promptId);
       $("#vidGrid").appendChild(tile);
-      jobs[data.promptId] = { el: $("#vidGrid"), label: t("videos.loading"), type: "video" };
+      jobs[data.promptId] = { el: $("#vidGrid"), label: t("videos.loading"), type: "video", prompt: p.prompt, duration: p.duration };
       startPolling(data.promptId, "video");
       status.className = "gen-status";
       status.textContent = t("gen.submitted") + " \u00b7 " + t("gen.taskId") + " " + data.promptId.slice(0, 8);
@@ -841,9 +842,20 @@
             return;
           }
           tiles.forEach(function (tile) { tile.remove(); });
+          var cards = [];
           list.forEach(function (f) {
-            grid.appendChild(kind === "image" ? mediaImageCard(f, promptId) : mediaVideoCard(f, promptId));
+            var c = kind === "image" ? mediaImageCard(f, promptId) : mediaVideoCard(f, promptId);
+            grid.appendChild(c);
+            if (kind === "video") cards.push({ card: c, file: f });
           });
+          if (kind === "video" && autoSound()) {
+            var si = 0;
+            (function chain() {
+              if (si >= cards.length) return;
+              var entry = cards[si++];
+              addSound(entry.file, promptId, entry.card, chain);
+            })();
+          }
         } else if (data.state === "error") {
           tiles.forEach(function (tile) { tile.remove(); });
           showError(grid, data.error || t("gen.serverDown"));
@@ -945,9 +957,125 @@
     dl.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg><span>' + esc(t("images.download")) + "</span>";
     dl.addEventListener("click", function () { downloadFile(mediaUrl(f)); });
     tools.appendChild(dl);
+
+    var so = document.createElement("button");
+    so.type = "button";
+    so.dataset.sound = "1";
+    so.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg><span>' + esc(t("videos.soundOn")) + "</span>";
+    so.addEventListener("click", function () { addSound(f, promptId, card, null); });
+    tools.appendChild(so);
+
     card.appendChild(v);
     card.appendChild(tools);
     return card;
+  }
+
+  function autoSound() {
+    return settings.videoSound !== false;
+  }
+
+  function addSound(f, promptId, card, done) {
+    var job = jobs[promptId];
+    var prompt = (job && job.prompt) || $("#vidPrompt").value.trim();
+    var duration = (job && job.duration) || 5;
+    var btn = card.querySelector("[data-sound]");
+    if (btn) {
+      btn.disabled = true;
+      btn.classList.add("busy");
+      var span = btn.querySelector("span");
+      if (span) span.textContent = t("videos.soundBusy");
+    }
+    api("/api/audio/render", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt: prompt, file: f, durationSeconds: duration })
+    }).then(function (data) {
+      var v = card.querySelector("video");
+      if (v && data.file) {
+        v.src = mediaUrl(data.file);
+        v.muted = false;
+        v.load();
+      }
+      if (btn) {
+        btn.disabled = false;
+        btn.classList.remove("busy");
+        btn.classList.add("ok");
+        var sv = btn.querySelector("span");
+        if (sv) sv.textContent = t("videos.soundAdded");
+      }
+      toast(t("videos.soundAdded"), "ok");
+      if (done) done();
+    }).catch(function (err) {
+      if (btn) {
+        btn.disabled = false;
+        btn.classList.remove("busy");
+        var sv = btn.querySelector("span");
+        if (sv) sv.textContent = t("videos.soundOn");
+      }
+      toast(err && err.message ? err.message : t("gen.serverDown"), "err");
+      if (done) done();
+    });
+  }
+
+  /* ---------------- agent (automação) ---------------- */
+
+  function refreshAgentStatus() {
+    api("/api/agent/status").then(function (d) {
+      var w = $("#agentWorkspace");
+      if (w && d && d.workspace) w.textContent = t("agent.workspaceLabel") + " " + d.workspace;
+    }).catch(function () { });
+  }
+
+  function runAgent() {
+    var task = $("#agentTask").value.trim();
+    if (!task) { toast(t("gen.needPrompt"), "warn"); return; }
+    var status = $("#agentStatus");
+    var btn = $("#agentRunBtn");
+    status.className = "gen-status working";
+    status.textContent = t("agent.working");
+    btn.disabled = true;
+    api("/api/agent/run", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ task: task, model: settings.model || "" })
+    }).then(function (data) {
+      renderAgentLog(data);
+      status.className = "gen-status";
+      status.textContent = data.ok ? t("agent.done", { s: data.elapsed_s }) : (data.error || t("gen.errorTitle"));
+    }).catch(function (err) {
+      status.className = "gen-status error";
+      status.textContent = err && err.message ? err.message : t("gen.serverDown");
+    }).finally(function () { btn.disabled = false; });
+  }
+
+  function renderAgentLog(data) {
+    var box = $("#agentLog");
+    box.innerHTML = "";
+    if (data.created && data.created.length) {
+      var c = document.createElement("div");
+      c.className = "agent-created";
+      c.textContent = t("agent.created") + " " + data.created.join(", ");
+      box.appendChild(c);
+    }
+    (data.steps || []).forEach(function (st) {
+      var row = document.createElement("div");
+      row.className = "agent-row " + (st.ok ? "ok" : "fail");
+      var h = document.createElement("div");
+      h.className = "agent-op";
+      h.textContent = (st.ok ? "\u2713 " : "\u00d7 ") + st.op;
+      var d = document.createElement("div");
+      d.className = "agent-detail";
+      d.textContent = st.detail || "";
+      row.appendChild(h);
+      if (st.detail) row.appendChild(d);
+      box.appendChild(row);
+    });
+    if (!data.steps || !data.steps.length) {
+      var e = document.createElement("div");
+      e.className = "agent-row fail";
+      e.textContent = data.error || "Nenhuma operação executada.";
+      box.appendChild(e);
+    }
   }
 
   /* ---------------- video animate mode ---------------- */
@@ -1407,6 +1535,21 @@
 
     // videos
     $("#vidGenerateBtn").addEventListener("click", generateVideo);
+
+    // agent
+    refreshAgentStatus();
+    $("#agentRunBtn").addEventListener("click", runAgent);
+    $("#agentTask").addEventListener("keydown", function (e) {
+      if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) runAgent();
+    });
+    var vsT = $("#vidSoundToggle");
+    if (vsT) {
+      vsT.checked = settings.videoSound !== false;
+      vsT.addEventListener("change", function () {
+        settings.videoSound = vsT.checked;
+        saveSettings();
+      });
+    }
     $("#vidModeSeg").addEventListener("click", function (e) {
       var btn = e.target.closest(".seg-btn");
       if (btn) setVidMode(btn.getAttribute("data-vidmode"));
