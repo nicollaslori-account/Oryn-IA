@@ -400,12 +400,107 @@ DISEASES = [
     "hiv", "aids", "verruga", "furúnculo", "unha encravada", "cárie", "gengivite",
 ]
 
+# Religião e filosofia
+RELIGION = [
+    "cristianismo", "catolicismo", "protestantismo", "evangélico", "islamismo",
+    "judaísmo", "budismo", "hinduísmo", "espiritismo", "umbanda", "candomblé",
+    "xamanismo", "confucionismo", "taoismo", "sikhismo", "ateísmo", "agnosticismo",
+    "bíblia", "alcorão", "torá", "vedas", "evangelho", "rezar", "oração",
+    "igreja", "mesquita", "sinagoga", "templo", "padre", "pastor", "papa",
+    "frei", "monges", "freiras", "batismo", "comunhão", "confissão", "missa",
+    "filosofia", "estoicismo", "epicurismo", "existencialismo", "utilitarismo",
+    "niilismo", "idealismo", "materialismo", "lógica", "ética", "moral",
+    "cosmologia", "metafísica", "epistemologia", "hermenêutica", "socráticos",
+]
+
+# Esportes e atividades
+SPORTS_EXTRA = [
+    "basquete nba", "volei de praia", "futebol americano nfl", "hóquei no gelo",
+    "beisebol mlb", "críquete", "rugby", "handebol", "waterpolo", "polo aquático",
+    "ginástica artística", "ginástica rítmica", "halterofilismo", "levantamento de peso",
+    "luta olímpica", "judô olímpico", "taekwondo", "karatê", "boxe olímpico",
+    "esgrima", "tiro esportivo", "tiro com arco", "pentatlo", "triatlo",
+    "canoagem", "remo", "vela", "surfe olímpico", "skate olímpico", "escalada esportiva",
+    "badminton", "ping-pong", "tênis de mesa", "squash", "racquetball",
+    "boliche", "bilhar", "sinuca", "dardos", "pesca esportiva", "caça",
+    "paraglider", "paraquedismo", "bungee jump", "rafting", "canyoning",
+    "esqui", "snowboard", "patinação no gelo", "patinação artística", "montanhismo",
+    "trekking", "trilha", "acampamento", "paintball", "airsoft", "laser tag",
+    "corrida de rua", "maratona", "meia maratona", "crossfit", "funcional",
+    "hiit", "pilates", "zumba", "dança de salão", "forró", "samba de roda",
+]
+
+# Escrita, carreira e estudos
+CAREER_WRITING = [
+    "redação", "dissertação", "tese", "monografia", "artigo científico", "resenha",
+    "resumo", "fichamento", "trabalho acadêmico", "normas abnt", "formatação abnt",
+    "citações", "referências bibliográficas", "paráfrase", "coesão textual",
+    "crase", "concordância", "regência", "pontuação", "vírgula", "acentuação",
+    "novo acordo ortográfico", "português para concurso", "interpretação de texto",
+    "comunicação", "oratória", "apresentação", "slide", "reunião", "networking",
+    "entrevista", "teste psicológico", "dinâmica de grupo", "carreira", "promoção",
+    "salário", "negociação salarial", "plano de carreira", "desenvolvimento pessoal",
+    "produtividade", "gestão de tempo", "priorização", "sistema pomodoro",
+    "mindset", "mentalidade", "hábitos", "metas", "planejamento", "organização",
+    "curriculum vitae", "carta de apresentação", "portfólio", "linkedin",
+    "perfil profissional", "marcapessoal", "autoconhecimento", "inteligência emocional",
+]
+
+# Tecnologia nova 2026
+TECH_NEW_2026 = [
+    "chatgpt 5", "grok", "gemini", "claude", "copilot", "meta ai", "deepseek",
+    "llama", "mistral", "stable diffusion", "midjourney", "dall-e", "sora",
+    "suno", "elevenlabs", "whisper", "transcrição automática", "tradução automática",
+    "agente de ia", "ia agêntica", "multimodal", "ragged", "sql rag", "llm",
+    "fine-tuning", "prompt engineering", "token", "alucinação", "contexto largo",
+    "quantização", "inferência local", "ollama", "comfyui workflow", "flux",
+    "wan", "img2vid", "texto para imagem", "texto para vídeo", "upscale",
+    "restauração de imagem", "remoção de fundo", "geração de voz", "clonagem de voz",
+    "robótica", "humanoide", "nebula bot", "automação residencial", "smart house",
+    "ia de saúde", "ia na educação", "ia no direito", "ia no marketing",
+    "cibersegurança de ia", "deepfake", "ai watermark", "regulação de ia",
+    "ia ética", "privacidade de dados", "lgpd", "lgpd na prática",
+]
+
+# Mais destinos turísticos no mundo
+TRAVEL_MORE = [
+    "paris", "roma", "lisboa", "londres", "nova york", "dubai", "toquio",
+    "barcelona", "madrid", "amsterdam", "praga", "veneza", "florença", "berlim",
+    "viena", "budapeste", "estambul", "bangcoc", "singapura", "sydney", "melbourne",
+    "toronto", "vancouver", "los angeles", "las vegas", "miami", "orlando",
+    "cidade do mexico", "lima", "santiago", "buenos aires", "montevideu",
+    "cartagena", "havana", "cancun", "punta cana", "praia do caribe",
+    "ilha de páscoa", "machu picchu", "torre eiffel", "big ben", "coliseu",
+    "estátua da liberdade", "cristo redentor", "muralha da china", "taj mahal",
+    "coliseu de roma", "acrópole de atenas", "piramides de giza", "grand canyon",
+    "campos de lavanda", "santorini", "costa amalfitana", "bali", "maldives",
+    "bora bora", "tailandia", "dominicana", "porto de galinhas", "jericoacoara",
+    "fernando de noronha", "chapada dos veadeiros", "bonito", "recife antigo",
+    "olinda", "salvador pelourinho", "são miguel dos milagres", "canção do vale",
+]
+
+# Biografias brasileiras e figuras públicas
+BRAZILIAN_PEOPLE = [
+    "rodrigo faro", "ludovia", "whindersson nunes", "felipe neto", "casimiro",
+    "jorge fernando", "márcia sensível", "tati quebra barraco", "mc pipokinha",
+    "teto", "ana castela", "simone mendes", "maraisa", "maiara", "azevedo",
+    "gusttavo lima", "leo santana", "claudia raia", "paola oliveira", "debora secco",
+    "fernanda torres", "selton mello", "wagner moura", "lázaro ramos", "rodrigo santoro",
+    "leandro hassum", "toni ramos", "bruna marquezine", "taís araújo", "lázaro",
+    "sabrina sato", "maisa", "fernando e sorocaba", "marcos e belutti",
+    "alok", "vintage culture", "zeca ribeiro", "romero brito", "creuza",
+    "pelé biografia", "nascimento de pelé", "garrincha", "sócrates jogador",
+    "rivellino", "zico", "falcao", "junior", "zagallo", "telê santana",
+    "gabriel pensador", "marcelo d2", "mv bill", "sabotage", "racionais",
+]
+
 # Build final TOPICS
 _topics_extra = (
     GEO_EXTRA + FOOD_WORLD + PERSONALITIES + MOVIES_SERIES + MUSICIANS
     + MEMES_INTERNET + FOOD_EXTRA + FOOTBALL_TEAMS + BRAZIL_STATES
     + BRAZIL_CITIES + UNIVERSITIES + COMPANIES + ANIMALS + HOLIDAYS_DATE
-    + DISEASES
+    + DISEASES + RELIGION + SPORTS_EXTRA + CAREER_WRITING + TECH_NEW_2026
+    + TRAVEL_MORE + BRAZILIAN_PEOPLE
 )
 for _country, _capital in COUNTRIES_CAPITALS:
     _topics_extra.append(_country)
