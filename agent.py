@@ -47,7 +47,7 @@ Regras:
 - Mapeie o pedido em uma ou mais operações válidas.
 - Escreva arquivos e pastas SEMPRE dentro do workspace (paths relativos como "site/index.html").
 - Para código Python, primeiro crie o arquivo com write_file e depois execute com run_python.
-- NÃO use run_python para jogos ou programas interativos com janela/entrada (input(), loops com "while True", pygame, tkinter, turtle, mainloop, animation). Nesses casos, apenas crie o arquivo com write_file — não execute, senão o programa fica rodando para sempre.
+- Para jogos ou programas interativos com janela/entrada (input(), loops com "while True", pygame, tkinter, turtle, mainloop), crie o arquivo com write_file e chame run_python — ele será aberto numa janela separada e não trava o agente.
 - Só use run_python para scripts que terminam sozinhos (cálculos, prints, testes rápidos).
 - Não invente caminhos absolutos do Windows; use caminhos relativos ao workspace.
 
@@ -151,7 +151,16 @@ def _op_run_python(args: dict[str, Any]) -> str:
         raise ValueError(f"Erro de sintaxe na linha {e.lineno}: {e.msg}")
     low = code.lower()
     if any(h in low for h in INTERACTIVE_HINTS):
-        return "Arquivo verificado (sintaxe OK). Não executei: é interativo/com janela e ficaria rodando sem parar. Abra o arquivo para testar."
+        try:
+            subprocess.Popen(
+                [sys.executable, str(p)],
+                cwd=str(WORKSPACE),
+                env={**os.environ, "PYTHONIOENCODING": "utf-8"},
+                creationflags=getattr(subprocess, "CREATE_NEW_CONSOLE", 0),
+            )
+        except Exception as e:
+            raise ValueError(f"Sintaxe OK, mas não consegui abrir a janela: {e}")
+        return "Arquivo verificado (sintaxe OK) e aberto numa janela separada para você testar."
     try:
         proc = subprocess.run(
             [sys.executable, str(p)],
