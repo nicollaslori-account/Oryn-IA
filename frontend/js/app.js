@@ -1469,6 +1469,92 @@
     });
   }
 
+  /* ---------------- donate ---------------- */
+
+  var donateData = null;
+  var DONATE_PLATFORMS = [
+    { id: "patreon", label: "donate.patreon" },
+    { id: "kofi", label: "donate.kofi" },
+    { id: "buymeacoffee", label: "donate.buymeacoffee" },
+    { id: "github", label: "donate.github" }
+  ];
+
+  function fallbackCopy(text) {
+    var ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand("copy"); } catch (e) { }
+    ta.remove();
+  }
+
+  function copyText(text, btn) {
+    function done() {
+      if (btn) {
+        btn.textContent = t("donate.copied");
+        setTimeout(function () { btn.textContent = t("donate.copy"); }, 1600);
+      }
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done).catch(function () { fallbackCopy(text); done(); });
+    } else { fallbackCopy(text); done(); }
+  }
+
+  function renderDonate() {
+    var d = donateData || {};
+    $("#donatePixKey").value = d.pixKey || "";
+    $("#donatePixCode").value = d.pixPayload || "";
+    $("#donateQr").src = "/api/donate/qr.png?t=" + Date.now();
+
+    var links = d.links || {};
+    var box = $("#donateLinks");
+    box.innerHTML = "";
+    DONATE_PLATFORMS.forEach(function (p) {
+      var url = links[p.id];
+      var el;
+      if (url) {
+        el = document.createElement("a");
+        el.href = url;
+        el.target = "_blank";
+        el.rel = "noopener";
+        el.className = "donate-link";
+        el.textContent = t(p.label);
+      } else {
+        el = document.createElement("span");
+        el.className = "donate-link disabled";
+        el.innerHTML = esc(t(p.label)) + ' <span class="soon">' + esc(t("donate.soon")) + "</span>";
+      }
+      box.appendChild(el);
+    });
+  }
+
+  function openDonate() {
+    $("#donateModal").classList.remove("hidden");
+    if (donateData) { renderDonate(); return; }
+    api("/api/donate").then(function (data) {
+      donateData = data;
+      renderDonate();
+    }).catch(function () { renderDonate(); });
+  }
+
+  function closeDonate() { $("#donateModal").classList.add("hidden"); }
+
+  function setupDonate() {
+    var btn = $("#donateBtn");
+    if (btn) btn.addEventListener("click", openDonate);
+    var close = $("#donateClose");
+    if (close) close.addEventListener("click", closeDonate);
+    var overlay = $("#donateModal");
+    if (overlay) overlay.addEventListener("click", function (e) { if (e.target === overlay) closeDonate(); });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeDonate(); });
+    var ck = $("#donateCopyKey");
+    if (ck) ck.addEventListener("click", function () { copyText($("#donatePixKey").value, this); });
+    var cc = $("#donateCopyCode");
+    if (cc) cc.addEventListener("click", function () { copyText($("#donatePixCode").value, this); });
+  }
+
   /* ---------------- init ---------------- */
 
   function init() {
@@ -1637,6 +1723,9 @@
     });
     $("#setTemp").addEventListener("input", function () { $("#setTempVal").textContent = this.value; });
     $("#refreshModelsBtn").addEventListener("click", function () { refreshModelsList(); toast(t("status.checking"), "ok"); });
+
+    // donate
+    setupDonate();
 
     // bootstrap config from server
     api("/api/config").then(function (cfg) {

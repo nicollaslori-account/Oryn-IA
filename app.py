@@ -13,6 +13,7 @@ from typing import Any
 import requests
 import audio_gen
 import agent
+import donate
 from flask import Flask, Response, jsonify, request, send_from_directory
 
 ROOT = Path(__file__).parent
@@ -243,6 +244,37 @@ def get_config():
             "vae_flux2": find_model_file("flux2-vae.safetensors", ["models/vae/split_files/vae"]),
         },
     })
+
+
+@app.get("/api/donate")
+def get_donate_info():
+    cfg = load_config()
+    data = donate.get_donate(cfg)
+    data["pixPayload"] = donate.pix_payload_from_cfg(cfg)
+    return jsonify(data)
+
+
+@app.get("/api/donate/qr.png")
+def donate_qr_png():
+    amount = request.args.get("amount", "").strip()
+    try:
+        value = float(amount.replace(",", ".")) if amount else None
+    except ValueError:
+        value = None
+    payload = donate.pix_payload_from_cfg(load_config(), amount=value)
+    png = donate.pix_qr_png(payload)
+    return Response(png, mimetype="image/png", headers={"Cache-Control": "no-store"})
+
+
+@app.get("/api/donate/qr.svg")
+def donate_qr_svg():
+    amount = request.args.get("amount", "").strip()
+    try:
+        value = float(amount.replace(",", ".")) if amount else None
+    except ValueError:
+        value = None
+    payload = donate.pix_payload_from_cfg(load_config(), amount=value)
+    return Response(donate.pix_qr_svg(payload), mimetype="image/svg+xml", headers={"Cache-Control": "no-store"})
 
 
 @app.get("/api/media")

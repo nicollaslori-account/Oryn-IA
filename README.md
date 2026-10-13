@@ -113,8 +113,9 @@ ORYN/
 ├─ install.bat            # instalador automático
 ├─ start.bat              # iniciador (Ollama + ComfyUI + ORYN)
 ├─ download_models.py     # download dos modelos de geração
+├─ donate.py              # geração do PIX (Copia e Cola) e QR Code offline
 ├─ Modelfile-14b / -32b   # personalidade do ORYN nos modelos de chat
-├─ config.json            # URLs do Ollama / ComfyUI
+├─ config.json            # URLs do Ollama / ComfyUI (+ seção de doações)
 ├─ requirements.txt       # dependências Python
 ├─ comfy_workflows/       # backup + templates padrão (FLUX.2 / Wan)
 │  └─ defaults/
@@ -132,6 +133,28 @@ ORYN/
 | Chat usa modelo errado | Em Configurações, escolha `oryn:14b` (ou `qwen3`) — o padrão é automático. |
 | Geração falha por memória | Use resolução menor (ex.: 640×640 no vídeo, 832×480). Modelos 14B/32B exigem mais VRAM. |
 | Baixou modelos e não aparecem | Verifique se `config.json` aponta para o ComfyUI certo e reinicie. |
+
+## Apoie o ORYN
+
+O ORYN é gratuito, open-source e roda 100% no seu computador. Se ele te ajuda, considere apoiar o projeto:
+
+- **PIX (CPF):** `076.437.581-40`
+- **PIX Copia e Cola / QR Code:** clique no coração (**Apoiar o ORYN**) no topo da interface — o QR Code e o código PIX são gerados automaticamente e ficam prontos para copiar.
+- **GitHub Sponsors:** <https://github.com/sponsors/nicollaslori-account>
+- **Patreon:** em breve.
+
+Quer usar outra chave ou link? Basta editar a seção `donate` no `config.json`:
+
+```json
+"donate": {
+  "pixKey": "sua-chave-pix",
+  "pixName": "SEU NOME",
+  "pixCity": "SUA CIDADE",
+  "links": { "patreon": "https://...", "kofi": "", "buymeacoffee": "", "github": "" }
+}
+```
+
+O QR Code do PIX é gerado **offline** (sem enviar seus dados para nenhum serviço).
 
 ## Licença
 

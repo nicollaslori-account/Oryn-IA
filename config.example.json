@@ -1,4 +1,15 @@
 {
   "ollamaUrl": "http://localhost:11434",
-  "comfyuiUrl": "http://127.0.0.1:8188"
+  "comfyuiUrl": "http://127.0.0.1:8188",
+  "donate": {
+    "pixKey": "076.437.581-40",
+    "pixName": "NICOLLAS LORICCHIO",
+    "pixCity": "SAO PAULO",
+    "links": {
+      "patreon": "",
+      "kofi": "",
+      "buymeacoffee": "",
+      "github": "https://github.com/sponsors/nicollaslori-account"
+    }
+  }
 }

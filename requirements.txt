@@ -36,6 +36,9 @@ pytesseract>=0.3.10
 python-dotenv>=1.0.0
 numpy>=1.26.0
 
+# Doações (QR Code PIX offline)
+segno>=1.6.0
+
 # Pesquisa
 ddgs>=9.0.0
 duckduckgo-search>=6.1.8
