@@ -104,6 +104,17 @@ def find_model_file(filename: str, subfolders: list[str]) -> bool:
     return False
 
 
+def first_model_file(candidates: list[str], subfolders: list[str]) -> str:
+    """Retorna o primeiro nome de arquivo existente em disco (ou o primeiro candidato)."""
+    roots = detect_comfyui_roots()
+    for name in candidates:
+        for root in roots:
+            for sub in subfolders:
+                if (root / sub / name).exists():
+                    return name
+    return candidates[0]
+
+
 def comfy_available() -> bool:
     try:
         r = requests.get(f"{COMFYUI_URL}/system_stats", timeout=3)
@@ -178,9 +189,19 @@ def status():
     flux_clip = find_model_file("qwen_3_4b_fp4_flux2.safetensors", ["models/text_encoders/split_files/text_encoders"])
     flux_vae = find_model_file("flux2-vae.safetensors", ["models/vae/split_files/vae"])
 
+    sd15 = find_model_file("v1-5-pruned-emaonly-fp16.safetensors", ["models/checkpoints", "checkpoints"]) \
+        or find_model_file("v1-5-pruned-emaonly.safetensors", ["models/checkpoints", "checkpoints"])
+    sdxl_turbo = find_model_file("sd_xl_turbo_1.0_fp16.safetensors", ["models/checkpoints", "checkpoints"]) \
+        or find_model_file("sd_xl_turbo_1.0.safetensors", ["models/checkpoints", "checkpoints"])
+    wan21 = find_model_file("wan2.1_t2v_1.3B_fp16.safetensors", ["models/diffusion_models"]) \
+        or find_model_file("wan2.1_t2v_1.3B_bf16.safetensors", ["models/diffusion_models"])
+
     flux_klein_ready = comfyui_online and flux_klein and flux_clip and flux_vae
     wan_5b_ready = comfyui_online and wan_5b and vae_wan and clip_umt5
     wan_14b_ready = comfyui_online and wan_14b_hi and wan_14b_lo and vae_wan and clip_umt5
+    sd15_ready = comfyui_online and sd15
+    sdxl_turbo_ready = comfyui_online and sdxl_turbo
+    wan21_ready = comfyui_online and wan21 and vae_wan and clip_umt5
 
     try:
         _du = shutil.disk_usage(ROOT)
@@ -204,6 +225,9 @@ def status():
         "flux_klein": flux_klein_ready,
         "wan_5b": wan_5b_ready,
         "wan_14b": wan_14b_ready,
+        "sd15": sd15_ready,
+        "sdxl_turbo": sdxl_turbo_ready,
+        "wan21": wan21_ready,
         "disk_free_gb": disk_free_gb,
         "disk_total_gb": disk_total_gb,
         "comfyui_url": COMFYUI_URL,
@@ -242,6 +266,9 @@ def get_config():
             "clip_umt5": find_model_file("umt5_xxl_fp8_e4m3fn_scaled.safetensors", ["models/text_encoders"]),
             "clip_flux2": find_model_file("qwen_3_4b_fp4_flux2.safetensors", ["models/text_encoders/split_files/text_encoders"]),
             "vae_flux2": find_model_file("flux2-vae.safetensors", ["models/vae/split_files/vae"]),
+            "sd15": find_model_file("v1-5-pruned-emaonly-fp16.safetensors", ["models/checkpoints", "checkpoints"]) or find_model_file("v1-5-pruned-emaonly.safetensors", ["models/checkpoints", "checkpoints"]),
+            "sdxl_turbo": find_model_file("sd_xl_turbo_1.0_fp16.safetensors", ["models/checkpoints", "checkpoints"]) or find_model_file("sd_xl_turbo_1.0.safetensors", ["models/checkpoints", "checkpoints"]),
+            "wan21_13b": find_model_file("wan2.1_t2v_1.3B_fp16.safetensors", ["models/diffusion_models"]) or find_model_file("wan2.1_t2v_1.3B_bf16.safetensors", ["models/diffusion_models"]),
         },
     })
 
@@ -553,15 +580,42 @@ def generate_image():
     if not comfy_available():
         return jsonify({"error": "ComfyUI offline. Inicie-o em " + COMFYUI_URL}), 503
 
-    wf = build_flux2_klein_prompt(
-        prompt=prompt,
-        negative="",
-        width=int(data.get("width", 1024)),
-        height=int(data.get("height", 1024)),
-        seed=data.get("seed", 0),
-        steps=int(data.get("steps", 20)),
-        batch=int(data.get("batch", 1)),
-    )
+    model = data.get("model", "kontext_flux_2_klein")
+    width = int(data.get("width", 1024))
+    height = int(data.get("height", 1024))
+    seed = data.get("seed", 0)
+    batch = int(data.get("batch", 1))
+
+    if model in ("sd15", "sd_1_5", "sd1.5"):
+        ckpt = first_model_file(
+            ["v1-5-pruned-emaonly-fp16.safetensors", "v1-5-pruned-emaonly.safetensors"],
+            ["models/checkpoints", "checkpoints"],
+        )
+        wf = build_sd_checkpoint_image(
+            checkpoint=ckpt, prompt=prompt, negative="", width=width, height=height,
+            seed=seed, steps=int(data.get("steps") or 25), cfg=7.0, batch=batch,
+            sampler="dpmpp_2m", scheduler="karras", prefix="ORYN/SD15",
+        )
+    elif model in ("sdxl_turbo", "sdxl-turbo"):
+        ckpt = first_model_file(
+            ["sd_xl_turbo_1.0_fp16.safetensors", "sd_xl_turbo_1.0.safetensors"],
+            ["models/checkpoints", "checkpoints"],
+        )
+        wf = build_sd_checkpoint_image(
+            checkpoint=ckpt, prompt=prompt, negative="", width=width, height=height,
+            seed=seed, steps=int(data.get("steps") or 4), cfg=1.0, batch=batch,
+            sampler="euler_a", scheduler="normal", prefix="ORYN/SDXL",
+        )
+    else:
+        wf = build_flux2_klein_prompt(
+            prompt=prompt,
+            negative="",
+            width=width,
+            height=height,
+            seed=seed,
+            steps=int(data.get("steps", 20)),
+            batch=batch,
+        )
     return _submit_comfyui_prompt(wf)
 
 
@@ -616,9 +670,13 @@ def generate_video():
         start_name = None
         if start_image:
             start_name = _ensure_input_image(start_image)
-        if model == "wan_14b" and start_name:
+        if model in ("wan21_13b", "wan21", "wan_2.1_1.3b") and start_name:
+            return jsonify({"error": "O Wan 2.1 1.3B é text-to-video. Para animar uma imagem, use o Wan 2.2 5B."}), 400
+        if model in ("wan21_13b", "wan21", "wan_2.1_1.3b"):
+            wf = build_wan21_13b(prompt, width, height, length_frames, fps, seed)
+        elif model == "wan_14b" and start_name:
             return jsonify({"error": "O Wan 2.2 14B instalado é text-to-video. Para animar uma imagem, use o Wan 2.2 5B."}), 400
-        if model == "wan_14b":
+        elif model == "wan_14b":
             wf = build_wan22_14b_t2v(prompt, width, height, length_frames, fps, seed)
         else:
             wf = build_wan22_5b(prompt, width, height, length_frames, fps, seed, start_image=start_name)
@@ -984,6 +1042,86 @@ def build_wan22_14b_t2v(
         "video": ["31", 0], "filename_prefix": "ORYN/video",
         "format": "mp4", "codec": {"codec": "h264"},
     }}
+    return g
+
+
+def _resolve_wan21_files() -> dict[str, str]:
+    info = comfyui_object_info()
+    unet_list = _split_choices(info.get("UNETLoader", {}).get("input", {}).get("required", {}).get("unet_name", [None, None]))
+    wan21 = None
+    for name in unet_list:
+        nl = name.lower()
+        if "1.3b" in nl or "1_3b" in nl or "1b3" in nl:
+            wan21 = name
+            break
+    vae_names = _split_choices(info.get("VAELoader", {}).get("input", {}).get("required", {}).get("vae_name", [None, None]))
+    vae = None
+    for vn in vae_names:
+        vlower = vn.lower()
+        if "wan2.2_vae" in vlower or "wan_2.1_vae" in vlower:
+            vae = vn
+            break
+    clip_names = _split_choices(info.get("CLIPLoader", {}).get("input", {}).get("required", {}).get("clip_name", [None, None]))
+    clip = None
+    for cn in clip_names:
+        if "umt5" in cn.lower():
+            clip = cn
+            break
+    if not all([wan21, vae, clip]):
+        missing = []
+        if not wan21: missing.append("Wan 2.1 1.3B")
+        if not vae: missing.append("wan VAE")
+        if not clip: missing.append("umt5 text encoder")
+        raise ValueError("Modelos Wan 2.1 ausentes no ComfyUI: " + ", ".join(missing) + ".")
+    return {"unet": wan21, "vae": vae, "clip": clip}
+
+
+def build_wan21_13b(
+    prompt: str, width: int, height: int, length: int, fps: int, seed: int = 0,
+) -> dict[str, Any]:
+    m = _resolve_wan21_files()
+    g: dict[str, Any] = {}
+    g["1"] = {"class_type": "CLIPLoader", "inputs": {"clip_name": m["clip"], "type": "wan", "device": "default"}}
+    g["2"] = {"class_type": "CLIPTextEncode", "inputs": {"clip": ["1", 0], "text": prompt}}
+    g["3"] = {"class_type": "CLIPTextEncode", "inputs": {"clip": ["1", 0], "text": ""}}
+    g["4"] = {"class_type": "UNETLoader", "inputs": {"unet_name": m["unet"], "weight_dtype": "default"}}
+    g["5"] = {"class_type": "ModelSamplingSD3", "inputs": {"model": ["4", 0], "shift": 8.0}}
+    g["6"] = {"class_type": "VAELoader", "inputs": {"vae_name": m["vae"]}}
+    g["7"] = {"class_type": "EmptyHunyuanLatentVideo", "inputs": {"width": width, "height": height, "length": length, "batch_size": 1}}
+    g["8"] = {"class_type": "KSampler", "inputs": {
+        "model": ["5", 0], "positive": ["2", 0], "negative": ["3", 0],
+        "latent_image": ["7", 0], "seed": seed, "steps": 30, "cfg": 6.0,
+        "sampler_name": "uni_pc", "scheduler": "simple", "denoise": 1.0,
+    }}
+    g["9"] = {"class_type": "VAEDecode", "inputs": {"samples": ["8", 0], "vae": ["6", 0]}}
+    g["10"] = {"class_type": "CreateVideo", "inputs": {"images": ["9", 0], "fps": float(fps), "bit_depth": "auto", "color_space": "sRGB"}}
+    g["11"] = {"class_type": "SaveVideo", "inputs": {
+        "video": ["10", 0], "filename_prefix": "ORYN/video",
+        "format": "mp4", "codec": {"codec": "h264"},
+    }}
+    return g
+
+
+def build_sd_checkpoint_image(
+    checkpoint: str, prompt: str, negative: str, width: int, height: int,
+    seed: int, steps: int, cfg: float, batch: int,
+    sampler: str = "dpmpp_2m", scheduler: str = "karras", prefix: str = "ORYN/image",
+) -> dict[str, Any]:
+    """Grafo txt2img generico para checkpoints (SD 1.5, SDXL, etc.)."""
+    if not prompt.strip():
+        raise ValueError("Escreva um prompt antes de gerar a imagem.")
+    g: dict[str, Any] = {}
+    g["1"] = {"class_type": "CheckpointLoaderSimple", "inputs": {"ckpt_name": checkpoint}}
+    g["2"] = {"class_type": "CLIPTextEncode", "inputs": {"clip": ["1", 1], "text": prompt}}
+    g["3"] = {"class_type": "CLIPTextEncode", "inputs": {"clip": ["1", 1], "text": negative or ""}}
+    g["4"] = {"class_type": "EmptyLatentImage", "inputs": {"width": width, "height": height, "batch_size": batch}}
+    g["5"] = {"class_type": "KSampler", "inputs": {
+        "model": ["1", 0], "positive": ["2", 0], "negative": ["3", 0],
+        "latent_image": ["4", 0], "seed": seed, "steps": steps, "cfg": cfg,
+        "sampler_name": sampler, "scheduler": scheduler, "denoise": 1.0,
+    }}
+    g["6"] = {"class_type": "VAEDecode", "inputs": {"samples": ["5", 0], "vae": ["1", 2]}}
+    g["7"] = {"class_type": "SaveImage", "inputs": {"images": ["6", 0], "filename_prefix": prefix}}
     return g
 
 

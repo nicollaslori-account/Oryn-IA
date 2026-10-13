@@ -139,6 +139,7 @@
   var visionImage = null;
   var vidAnimImage = null; // {dataUrl} user file or {filename,subfolder,type} comfy ref
   var jobs = {}; // promptId -> element
+  var viewDefaultsApplied = false;
   var statusTimer = null;
 
   function loadSettings() {
@@ -719,6 +720,7 @@
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         prompt: prompt,
+        model: $("#imgModel") ? $("#imgModel").value : "kontext_flux_2_klein",
         width: size.width,
         height: size.height,
         seed: seed,
@@ -1341,18 +1343,33 @@
     });
     settings.visionModel = optedVision;
 
-    [{ sel: $("#setImageDefault"), val: settings.imageDefault, opts: ["kontext_flux_2_klein", "flux-schnell", "flux-dev"] },
-     { sel: $("#setVideoDefault"), val: settings.videoDefault, opts: ["wan_5b", "wan_14b"] }].forEach(function (row) {
+    var imgModelLabels = { kontext_flux_2_klein: "FLUX.2 Klein", sdxl_turbo: "SDXL Turbo", sd15: "SD 1.5" };
+    var vidModelLabels = { wan_5b: "Wan 2.2 5B", wan_14b: "Wan 2.2 14B", wan21_13b: "Wan 2.1 1.3B" };
+    [{ sel: $("#setImageDefault"), val: settings.imageDefault, opts: ["kontext_flux_2_klein", "sdxl_turbo", "sd15"], labels: imgModelLabels },
+     { sel: $("#setVideoDefault"), val: settings.videoDefault, opts: ["wan_5b", "wan_14b", "wan21_13b"], labels: vidModelLabels }].forEach(function (row) {
       if (!row.sel) return;
       row.sel.innerHTML = "";
       row.opts.forEach(function (name) {
         var o = document.createElement("option");
         o.value = name;
-        o.textContent = name;
+        o.textContent = (row.labels && row.labels[name]) || name;
         if (name === row.val) o.selected = true;
         row.sel.appendChild(o);
       });
     });
+
+    if (!viewDefaultsApplied) {
+      viewDefaultsApplied = true;
+      var im = settings.imageDefault || "";
+      if (im === "flux-schnell" || im === "flux-dev") im = "kontext_flux_2_klein";
+      if ($("#imgModel") && Array.prototype.some.call($("#imgModel").options, function (o) { return o.value === im; })) {
+        $("#imgModel").value = im;
+      }
+      var vm = settings.videoDefault || "";
+      if ($("#vidModel") && Array.prototype.some.call($("#vidModel").options, function (o) { return o.value === vm; })) {
+        $("#vidModel").value = vm;
+      }
+    }
   }
 
   function refreshStatus() {

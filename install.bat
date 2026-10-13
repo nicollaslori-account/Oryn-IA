@@ -9,6 +9,7 @@ rem  - Instala as dependencias do ORYN
 rem  - Instala/verifica o Ollama e os modelos de chat (oryn, llava, embed)
 rem  - Reaproveita os modelos compartilhados do Comfy-Desktop (se houver)
 rem  - Baixa (default) os modelos Wan 2.2 / FLUX.2 Klein quando faltarem
+rem  - Oferece modelos leves (SD 1.5 + SDXL Turbo + Wan 2.1 1.3B) para GPU fraca
 rem  - Copia/restaura o SEU workflow e instala os templates FLUX.2 / Wan do ORYN
 rem ============================================================
 
@@ -255,6 +256,17 @@ if defined OLLAMA_OK (
     echo Puxando o modelo de embeddings nomic-embed-text...
     "%OLLAMA_EXE%" pull nomic-embed-text:latest
   )
+  "%OLLAMA_EXE%" list 2>nul | findstr /c:"gemma3:4b" >nul
+  if errorlevel 1 (
+    echo.
+    echo Modelos LEVES de chat funcionam bem em maquinas modestas (sem GPU dedicada).
+    choice /c SN /n /t 20 /d S /m "Puxar modelos leves de chat (gemma3:4b + llama3.2:3b/1b, ~5GB)? (S/n) "
+    if not errorlevel 2 (
+      "%OLLAMA_EXE%" pull gemma3:4b
+      "%OLLAMA_EXE%" pull llama3.2:3b
+      "%OLLAMA_EXE%" pull llama3.2:1b
+    )
+  )
   "%OLLAMA_EXE%" list 2>nul | findstr /c:"oryn:32b" >nul
   if errorlevel 1 (
     set /p DL_32B="Criar tambem o oryn:32b (puxa o qwen3:32b, ~20GB)? (s/n): "
@@ -306,6 +318,7 @@ if defined GPU_WEAK (
   echo.
   echo  GPU fraca ou sem NVIDIA: o instalador vai PULAR o Wan 14B (pesado).
   echo  Vem apenas FLUX.2 Klein (imagem) + Wan 2.2 5B (video basico) + chat/visao.
+  echo  No final serao oferecidos os modelos LEVES (SD 1.5 + SDXL Turbo + Wan 2.1 1.3B).
 )
 set "NEED_MODELS="
 set "HAVE_GEN="
@@ -342,6 +355,25 @@ if defined NEED_MODELS (
   )
 ) else (
   echo Modelos de geracao ja presentes (via Comfy-Desktop ou ComfyUI), sem download.
+)
+
+rem ---------- Modelos leves de geracao (opcional) ----------
+rem SD 1.5 + SDXL Turbo (imagem) + Wan 2.1 1.3B (video): rodam em GPU fraca.
+set "WANT_LIGHT="
+if defined GPU_WEAK (
+  echo.
+  echo  GPU fraca: os modelos LEVES (SD 1.5 + SDXL Turbo + Wan 2.1 1.3B, ~12 GB)
+  echo  sao a melhor opcao de imagem/video nesta maquina.
+  choice /c SN /n /t 30 /d S /m "Baixar os modelos leves agora? (S/n) "
+  if not errorlevel 2 set "WANT_LIGHT=1"
+) else (
+  choice /c SN /n /t 20 /d N /m "Baixar tambem os modelos leves (SD 1.5 + SDXL Turbo + Wan 2.1 1.3B, ~12 GB)? (s/N) "
+  if not errorlevel 2 set "WANT_LIGHT=1"
+)
+if defined WANT_LIGHT (
+  "%COMFY_VENV%" -m pip install -U huggingface_hub >nul 2>nul
+  echo Baixando modelos leves (alguns GB, pode demorar)...
+  "%COMFY_VENV%" "%ORYN_ROOT%\download_models.py" "%COMFY_ROOT%" --add-light
 )
 
 echo.

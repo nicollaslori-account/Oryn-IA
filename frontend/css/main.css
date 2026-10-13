@@ -1274,9 +1274,30 @@ input[type="range"]::-webkit-slider-thumb {
 
 /* ---------------- DONATE ---------------- */
 
-.icon-btn.donate-btn:hover { color: #ff5c8a; border-color: rgba(255, 92, 138, 0.4); }
-.icon-btn.donate-btn svg { transition: transform var(--t-fast); }
-.icon-btn.donate-btn:hover svg { transform: scale(1.12); }
+.donate-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 38px;
+  padding: 0 18px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(22, 163, 74, 0.35);
+  transition: transform var(--t-fast), box-shadow var(--t-fast), filter var(--t-fast);
+}
+.donate-btn:hover { filter: brightness(1.06); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(22, 163, 74, 0.45); }
+.donate-btn:active { transform: translateY(0); }
+@media (max-width: 520px) {
+  .donate-btn { padding: 0 12px; font-size: 13px; }
+}
 
 .modal-overlay {
   position: fixed;

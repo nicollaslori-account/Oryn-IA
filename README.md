@@ -10,8 +10,8 @@ Assistente de IA roda **100% local** no seu computador — conversa, visão, ger
 - **Visão** — solte uma imagem e faça perguntas sobre ela (modelo `llava`).
 - **Arquivos** — envie PDF, DOCX, XLSX, imagens, código, etc. e converse sobre o conteúdo.
 - **Pesquisa na web** — resultados com leitura automática da página, direto no chat.
-- **Imagens** — gere imagens com **FLUX.2 Klein** (1024×1024 ou outra proporção).
-- **Vídeos** — **Wan 2.2 5B** (texto→vídeo e animar uma imagem) e **Wan 2.2 14B** (texto→vídeo em 720p).
+- **Imagens** — gere imagens com **FLUX.2 Klein** (1024×1024 ou outra proporção), ou modelos leves **SDXL Turbo** / **SD 1.5**.
+- **Vídeos** — **Wan 2.2 5B** (texto→vídeo e animar uma imagem), **Wan 2.2 14B** (texto→vídeo em 720p) ou o leve **Wan 2.1 1.3B**.
 - **Voz** — fale com o ORYN (reconhecimento de voz) e ouça as respostas (texto-para-fala).
 - **Memória/RAG** — busca no seu acervo de documentos (ChromaDB) quando fizer sentido.
 
@@ -92,17 +92,26 @@ Na interface: **Configurações** permite escolher o modelo de chat (`oryn:14b` 
 |---|---|---|
 | `oryn:14b` (base `qwen3:14b`) | chat | Ollama |
 | `oryn:32b` (opcional) | chat pesado | Ollama |
+| `gemma3:4b`, `llama3.2:3b/1b` (leves) | chat em máquina modesta | Ollama |
 | `llava` | visão (imagens) | Ollama |
 | `nomic-embed-text` | busca/memória | Ollama |
 | `flux-2-klein-4b` + `flux2-vae` + Qwen3 4B fp4 | imagens FLUX.2 Klein | ComfyUI |
+| `v1-5-pruned-emaonly` (leve) | imagens SD 1.5 | ComfyUI |
+| `sd_xl_turbo_1.0_fp16` (leve) | imagens SDXL Turbo (rápido) | ComfyUI |
 | `wan2.2_ti2v_5B_fp16` | vídeo 5B (texto→vídeo / animar) | ComfyUI |
+| `wan2.1_t2v_1.3B_fp16` (leve) | vídeo Wan 2.1 1.3B | ComfyUI |
 | `wan2.2_t2v_*_14B_fp8` + `umt5` + `wan2.2_vae` | vídeo 14B 720p | ComfyUI |
+
+**Modelos leves** (para GPU fraca / sem NVIDIA dedicada): no chat use `gemma3:4b` ou `llama3.2:3b`; na aba **Imagens** escolha **SDXL Turbo** ou **SD 1.5**; na aba **Vídeos** escolha **Wan 2.1 1.3B**.
 
 Baixar modelos manualmente: `download_models.py` (aceita `--check` para só verificar o que falta):
 
 ```
-python download_models.py C:\ComfyUI\ComfyUI
+python download_models.py C:\ComfyUI\ComfyUI               # conjunto padrão (FLUX.2 Klein + Wan 5B)
 python download_models.py C:\ComfyUI\ComfyUI --check
+python download_models.py C:\ComfyUI\ComfyUI --light-only  # só os leves (SD 1.5 + SDXL Turbo + Wan 2.1 1.3B)
+python download_models.py C:\ComfyUI\ComfyUI --add-light   # padrão + leves
+python download_models.py C:\ComfyUI\ComfyUI --skip-wan14b # pula o Wan 14B (GPU fraca)
 ```
 
 ## Estrutura
