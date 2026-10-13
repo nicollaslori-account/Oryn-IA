@@ -382,8 +382,10 @@
   function replyLanguageInstruction() {
     var name = uiLanguageName();
     return "You are ORYN, an AI assistant running 100% on the user's own computer. " +
-      "RULE: ALWAYS write your ENTIRE reply in this language: " + name + ". " +
-      "Never write in any other language, even if the user writes in another language or asks you to change.";
+      "RULE 1: ALWAYS write your ENTIRE reply in this language: " + name + ". " +
+      "Never write in any other language, even if the user writes in another language or asks you to change. " +
+      "RULE 2: Use correct spelling, accents and grammar in that language; proofread before answering. " +
+      "RULE 3: Always write a complete answer - never stop in the middle of a sentence or right after a heading.";
   }
 
   function buildMessages(prompt, images) {
@@ -503,29 +505,37 @@
       var reader = resp.body.getReader();
       var decoder = new TextDecoder();
       var acc = "";
+      var buf = "";
       body.classList.remove("user-body");
       body.innerHTML = '<span class="cursor"></span>';
+
+      function handleLine(line) {
+        line = line.trim();
+        if (!line) return;
+        var obj = null;
+        try { obj = JSON.parse(line); } catch (e) { return; }
+        if (obj.error) { throwStreamError(obj.error); return; }
+        if (obj.message && obj.message.content) {
+          acc += obj.message.content;
+          replyAcc = acc;
+          body.innerHTML = md(acc) + '<span class="cursor"></span>';
+          scrollChat();
+        }
+      }
 
       function pump() {
         return reader.read().then(function (res) {
           if (res.done) {
-            body.querySelector(".cursor").remove();
+            if (buf.trim()) handleLine(buf);
+            var cur = body.querySelector(".cursor");
+            if (cur) cur.remove();
             finish(true, replyAcc);
             return;
           }
-          var lines = decoder.decode(res.value, { stream: true }).split("\n");
-          lines.forEach(function (line) {
-            if (!line.trim()) return;
-            var obj = null;
-            try { obj = JSON.parse(line); } catch (e) { return; }
-            if (obj.error) throwStreamError(obj.error);
-            if (obj.message && obj.message.content) {
-              acc += obj.message.content;
-              replyAcc = acc;
-              if (acc) body.innerHTML = md(acc) + '<span class="cursor"></span>';
-              scrollChat();
-            }
-          });
+          buf += decoder.decode(res.value, { stream: true });
+          var parts = buf.split("\n");
+          buf = parts.pop();
+          parts.forEach(handleLine);
           return pump();
         }).catch(function (err) {
           if (err.name === "AbortError") { finish(false); return; }

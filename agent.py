@@ -32,6 +32,14 @@ DANGEROUS_TOKENS = [
     "remove-item", "remove-item", "invoke-", "powercfg",
 ]
 
+INTERACTIVE_HINTS = [
+    "input(", "pygame", "turtle", "tkinter", "mainloop", "time.sleep(",
+    "sys.stdin", "getch", "cv2.imshow", ".show(", "msvcrt", "while true",
+    "getkey", "pyglet", "arcade.",
+]
+
+PY_TIMEOUT = 30
+
 PLAN_PROMPT = """Você é o "construtor" do ORYN, um agente que executa tarefas no computador do usuário (Windows).
 O usuário faz um pedido em português e você deve responder EXCLUSIVAMENTE com um JSON (array), sem texto, sem markdown, sem comentários.
 
@@ -39,6 +47,8 @@ Regras:
 - Mapeie o pedido em uma ou mais operações válidas.
 - Escreva arquivos e pastas SEMPRE dentro do workspace (paths relativos como "site/index.html").
 - Para código Python, primeiro crie o arquivo com write_file e depois execute com run_python.
+- NÃO use run_python para jogos ou programas interativos com janela/entrada (input(), loops com "while True", pygame, tkinter, turtle, mainloop, animation). Nesses casos, apenas crie o arquivo com write_file — não execute, senão o programa fica rodando para sempre.
+- Só use run_python para scripts que terminam sozinhos (cálculos, prints, testes rápidos).
 - Não invente caminhos absolutos do Windows; use caminhos relativos ao workspace.
 
 Operações válidas (formato {"op": "...", "args": {...}}):
@@ -136,6 +146,13 @@ def _op_run_python(args: dict[str, Any]) -> str:
     if bad:
         raise ValueError("Script bloqueado por segurança: " + ", ".join(bad[:3]))
     try:
+        compile(code, str(p), "exec")
+    except SyntaxError as e:
+        raise ValueError(f"Erro de sintaxe na linha {e.lineno}: {e.msg}")
+    low = code.lower()
+    if any(h in low for h in INTERACTIVE_HINTS):
+        return "Arquivo verificado (sintaxe OK). Não executei: é interativo/com janela e ficaria rodando sem parar. Abra o arquivo para testar."
+    try:
         proc = subprocess.run(
             [sys.executable, str(p)],
             cwd=str(WORKSPACE),
@@ -143,11 +160,11 @@ def _op_run_python(args: dict[str, Any]) -> str:
             text=True,
             encoding="utf-8",
             errors="replace",
-            timeout=30,
+            timeout=PY_TIMEOUT,
             env={**os.environ, "PYTHONIOENCODING": "utf-8"},
         )
     except subprocess.TimeoutExpired:
-        raise ValueError("Script excedeu 30 segundos e foi interrompido.")
+        raise ValueError(f"Script excedeu {PY_TIMEOUT} segundos e foi interrompido (ele não termina sozinho?).")
     out = (proc.stdout or "").strip()
     err = (proc.stderr or "").strip()
     status = f"-> SAÍDA | {out[:1500]}" if out else ""
